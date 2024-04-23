@@ -65,6 +65,8 @@ return [
 @method static \HalilCosdu\Ollama\Ollama image(string $imagePath): static
 @method static \HalilCosdu\Ollama\Ollama getImage(): ?string
 @method static \HalilCosdu\Ollama\Ollama embeddings(string $prompt)
+@method static \HalilCosdu\Ollama\Ollama getKeepAlive(): string
+@method static \HalilCosdu\Ollama\Ollama keepAlive(string $keepAlive): static
 @method static \HalilCosdu\Ollama\Ollama ask()
 @method static \HalilCosdu\Ollama\Ollama chat(array $conversation)
 
