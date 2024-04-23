@@ -30,7 +30,7 @@ class Ollama
 
     protected ?string $image = null;
 
-    protected string $keepAlive = "5m";
+    protected string $keepAlive = '5m';
 
     public function __construct(OllamaService $ollamaService)
     {
