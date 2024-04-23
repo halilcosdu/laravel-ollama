@@ -1,6 +1,6 @@
 {
     "name": "halilcosdu/laravel-ollama",
-    "description": "This is my package laravel-ollama",
+    "description": "Laravel Ollama API Wrapper - Interact with the Ollama API",
     "keywords": [
         "HalilCosdu",
         "laravel",
