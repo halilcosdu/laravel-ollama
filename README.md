@@ -12,6 +12,8 @@ Fluent interface: Chain methods together to build your requests.
 Flexible
 Comprehensive: Covers all the endpoints of the Ollama API.
 
+Starter credits : https://github.com/cloudstudio/ollama-laravel
+
 ## Installation
 
 You can install the package via composer:
