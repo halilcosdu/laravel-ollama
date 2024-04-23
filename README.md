@@ -9,9 +9,9 @@
 
 Laravel Ollama is a PHP package that provides a simple and intuitive interface for interacting with the Ollama API. It is designed to be used with Laravel, a popular PHP framework, but can also be used in any PHP application.  This package provides a set of methods for making requests to the Ollama API, including methods for setting the agent, prompt, model, format, options, and more. It also includes methods for handling responses from the API, such as retrieving the response in a specific format or streaming the response.  With Laravel Ollama, you can easily integrate the Ollama API into your Laravel application and start making requests in a matter of minutes.  
 Features
-Easy configuration: Set up the package with your Ollama API credentials and start making requests.
+Easy configuration
 Fluent interface: Chain methods together to build your requests.
-Flexible: Use the package in any PHP application, not just Laravel.
+Flexible
 Comprehensive: Covers all the endpoints of the Ollama API.
 
 ## Installation
@@ -32,7 +32,7 @@ This is the contents of the published config file:
 
 ```php
 return [
-    'model' => env('OLLAMA_MODEL', 'llama3'),
+    'model' => env('OLLAMA_MODEL', 'Llama3'),
     'url' => env('OLLAMA_URL', 'http://127.0.0.1:11434'),
     'default_prompt' => env('OLLAMA_DEFAULT_PROMPT', 'Hello, how can I assist you today?'),
     'connection' => [
@@ -117,25 +117,25 @@ $response = Ollama::agent('You know me really well!')
 ### Show Model Information
 
 ```php
-$response = Ollama::model('Llama2')->show();
+$response = Ollama::model('Llama3')->show();
 ```
 
 ### Copy a Model
 
 ```php
-Ollama::model('Llama2')->copy('NewModel');
+Ollama::model('Llama3')->copy('NewModel');
 ```
 
 ### Delete a Model
 
 ```php
-Ollama::model('Llama2')->delete();
+Ollama::model('Llama3')->delete();
 ```
 
 ### Generate Embeddings
 
 ```php
-$embeddings = Ollama::model('Llama2')->embeddings('Your prompt here');
+$embeddings = Ollama::model('Llama3')->embeddings('Your prompt here');
 ```
 
 
