@@ -162,7 +162,7 @@ class Ollama
      */
     public function image(string $imagePath): static
     {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             throw new Exception("Image file does not exist: $imagePath");
         }
 
