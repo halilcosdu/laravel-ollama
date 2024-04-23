@@ -5,8 +5,10 @@ namespace HalilCosdu\Ollama;
 use Exception;
 use HalilCosdu\Ollama\Services\OllamaService;
 use HalilCosdu\Ollama\Traits\MakesHttpRequests;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 
-class Ollama
+class Ollama implements Arrayable, Jsonable
 {
     use MakesHttpRequests;
 
@@ -224,5 +226,23 @@ class Ollama
             'options' => $this->getOptions(),
             'stream' => $this->getStream(),
         ]);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'model' => $this->getModel(),
+            'prompt' => $this->getPrompt(),
+            'format' => $this->getFormat(),
+            'options' => $this->getOptions(),
+            'stream' => $this->getStream(),
+            'raw' => $this->getRaw(),
+            'keep_alive' => $this->getKeepAlive(),
+        ];
+    }
+
+    public function toJson($options = 0): false|string
+    {
+        return json_encode($this->toArray(), $options);
     }
 }
