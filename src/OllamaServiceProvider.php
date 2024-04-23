@@ -4,7 +4,6 @@ namespace HalilCosdu\Ollama;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use HalilCosdu\Ollama\Commands\OllamaCommand;
 
 class OllamaServiceProvider extends PackageServiceProvider
 {

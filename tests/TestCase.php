@@ -2,9 +2,9 @@
 
 namespace HalilCosdu\Ollama\Tests;
 
+use HalilCosdu\Ollama\OllamaServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use HalilCosdu\Ollama\OllamaServiceProvider;
 
 class TestCase extends Orchestra
 {
