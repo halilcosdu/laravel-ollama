@@ -5,15 +5,14 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-ollama/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/halilcosdu/laravel-ollama/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/halilcosdu/laravel-ollama.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-ollama)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+## Laravel Ollama
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-ollama.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-ollama)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+Laravel Ollama is a PHP package that provides a simple and intuitive interface for interacting with the Ollama API. It is designed to be used with Laravel, a popular PHP framework, but can also be used in any PHP application.  This package provides a set of methods for making requests to the Ollama API, including methods for setting the agent, prompt, model, format, options, and more. It also includes methods for handling responses from the API, such as retrieving the response in a specific format or streaming the response.  With Laravel Ollama, you can easily integrate the Ollama API into your Laravel application and start making requests in a matter of minutes.  
+Features
+Easy configuration: Set up the package with your Ollama API credentials and start making requests.
+Fluent interface: Chain methods together to build your requests.
+Flexible: Use the package in any PHP application, not just Laravel.
+Comprehensive: Covers all the endpoints of the Ollama API.
 
 ## Installation
 
@@ -33,6 +32,12 @@ This is the contents of the published config file:
 
 ```php
 return [
+    'model' => env('OLLAMA_MODEL', 'llama3'),
+    'url' => env('OLLAMA_URL', 'http://127.0.0.1:11434'),
+    'default_prompt' => env('OLLAMA_DEFAULT_PROMPT', 'Hello, how can I assist you today?'),
+    'connection' => [
+        'timeout' => env('OLLAMA_CONNECTION_TIMEOUT', 30),
+    ],
 ];
 ```
 
