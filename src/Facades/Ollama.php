@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \HalilCosdu\Ollama\Ollama embeddings(string $prompt)
  * @method static \HalilCosdu\Ollama\Ollama ask()
  * @method static \HalilCosdu\Ollama\Ollama chat(array $conversation)
+ * @method static \HalilCosdu\Ollama\Ollama getKeepAlive(): string
+ * @method static \HalilCosdu\Ollama\Ollama keepAlive(string $keepAlive): static
  *
  **/
 class Ollama extends Facade

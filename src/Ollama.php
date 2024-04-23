@@ -30,6 +30,8 @@ class Ollama
 
     protected ?string $image = null;
 
+    protected string $keepAlive = "5m";
+
     public function __construct(OllamaService $ollamaService)
     {
         $this->ollamaService = $ollamaService;
@@ -181,6 +183,18 @@ class Ollama
         return $this->ollamaService->generateEmbeddings($this->selectedModel, $prompt);
     }
 
+    public function getKeepAlive(): string
+    {
+        return $this->keepAlive;
+    }
+
+    public function keepAlive(string $keepAlive): static
+    {
+        $this->keepAlive = $keepAlive;
+
+        return $this;
+    }
+
     public function ask()
     {
         $data = [
@@ -191,6 +205,7 @@ class Ollama
             'options' => $this->getOptions(),
             'stream' => $this->getStream(),
             'raw' => $this->getRaw(),
+            'keep_alive' => $this->getKeepAlive(),
         ];
 
         if ($this->image) {
