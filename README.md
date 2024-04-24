@@ -69,6 +69,9 @@ return [
 @method static \HalilCosdu\Ollama\Ollama keepAlive(string $keepAlive): static
 @method static \HalilCosdu\Ollama\Ollama ask()
 @method static \HalilCosdu\Ollama\Ollama chat(array $conversation)
+@method static \HalilCosdu\Ollama\Ollama toArray(): array
+@method static \HalilCosdu\Ollama\Ollama toJson($options = 0): false|string
+
 
 ```
 ## Usage

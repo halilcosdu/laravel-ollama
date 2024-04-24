@@ -33,7 +33,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \HalilCosdu\Ollama\Ollama chat(array $conversation)
  * @method static \HalilCosdu\Ollama\Ollama getKeepAlive(): string
  * @method static \HalilCosdu\Ollama\Ollama keepAlive(string $keepAlive): static
- *
+ * @method static \HalilCosdu\Ollama\Ollama toArray(): array
+ * @method static \HalilCosdu\Ollama\Ollama toJson($options = 0): false|string
  **/
 class Ollama extends Facade
 {
