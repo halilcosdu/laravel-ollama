@@ -1,4 +1,4 @@
-## Laravel Ollama
+## Laravel Ollama API Wrapper - Interact with the Ollama API
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/halilcosdu/laravel-ollama.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-ollama)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/halilcosdu/laravel-ollama/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/halilcosdu/laravel-ollama/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -14,6 +14,8 @@ Comprehensive: Covers all the endpoints of the Ollama API.
 
 This package builds upon the foundational work provided by the Ollama Laravel package developed by Cloud Studio. Special thanks to them for their innovative approach and contributions to the Laravel community.
 https://github.com/cloudstudio/ollama-laravel
+
+★ In near future, I will add more features to this package.
 
 ## Installation
 
