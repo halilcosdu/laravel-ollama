@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 
 trait MakesHttpRequests
 {
-    protected function sendRequest(string $urlSuffix, array $data, string $method = 'post')
+    protected function request(string $urlSuffix, array $data, string $method = 'post')
     {
         $ollamaUrl = config('ollama.url').$urlSuffix;
         $timeout = config('ollama.connection.timeout');

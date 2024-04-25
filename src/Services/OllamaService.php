@@ -22,17 +22,17 @@ class OllamaService
 
     public function listLocalModels()
     {
-        return $this->sendRequest('/api/tags', [], 'get');
+        return $this->request('/api/tags', [], 'get');
     }
 
     public function showModelInformation(string $modelName)
     {
-        return $this->sendRequest('/api/show', ['name' => $modelName]);
+        return $this->request('/api/show', ['name' => $modelName]);
     }
 
     public function copyModel(string $source, string $destination)
     {
-        return $this->sendRequest('/api/copy', [
+        return $this->request('/api/copy', [
             'source' => $source,
             'destination' => $destination,
         ]);
@@ -40,17 +40,17 @@ class OllamaService
 
     public function deleteModel(string $modelName)
     {
-        return $this->sendRequest('/api/delete', ['name' => $modelName], 'delete');
+        return $this->request('/api/delete', ['name' => $modelName], 'delete');
     }
 
     public function pullModel(string $modelName)
     {
-        return $this->sendRequest('/api/pull', ['name' => $modelName]);
+        return $this->request('/api/pull', ['name' => $modelName]);
     }
 
     public function generateEmbeddings(string $modelName, string $prompt)
     {
-        return $this->sendRequest('/api/embeddings', [
+        return $this->request('/api/embeddings', [
             'model' => $modelName,
             'prompt' => $prompt,
         ]);

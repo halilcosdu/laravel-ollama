@@ -77,7 +77,7 @@ class Ollama implements Arrayable, Jsonable
         return $this;
     }
 
-    public function getModel()
+    public function getModel(): string
     {
         return $this->model;
     }
@@ -214,12 +214,12 @@ class Ollama implements Arrayable, Jsonable
             $data['images'] = [$this->getImage()];
         }
 
-        return $this->sendRequest('/api/generate', $data);
+        return $this->request('/api/generate', $data);
     }
 
     public function chat(array $conversation)
     {
-        return $this->sendRequest('/api/chat', [
+        return $this->request('/api/chat', [
             'model' => $this->getModel(),
             'messages' => $conversation,
             'format' => $this->getFormat(),
