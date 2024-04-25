@@ -2,26 +2,29 @@
 
 namespace HalilCosdu\Ollama\Traits;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
 
 trait MakesHttpRequests
 {
+    /**
+     * @throws GuzzleException
+     */
     protected function request(string $urlSuffix, array $data, string $method = 'post')
     {
-        $ollamaUrl = config('ollama.url').$urlSuffix;
-        $timeout = config('ollama.connection.timeout');
+        $url = config('ollama.url') . $urlSuffix;
 
-        $options = [
-            'json' => $data,
-            'timeout' => $timeout,
-        ];
-
-        if (! empty($data['stream']) && $data['stream'] === true) {
-            $options['stream'] = true;
+        if (!empty($data['stream']) && $data['stream'] === true) {
+            $client = new Client;
+            return $client->request($method, $url, [
+                'json' => $data,
+                'stream' => true,
+                'timeout' => config('ollama.connection.timeout'),
+            ]);
+        } else {
+            $response = Http::timeout(config('ollama.connection.timeout'))->$method($url, $data);
+            return $response->json();
         }
-
-        $response = Http::timeout($timeout)->$method($ollamaUrl, $options);
-
-        return ! empty($data['stream']) && $data['stream'] === true ? $response : $response->json();
     }
 }

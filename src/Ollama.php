@@ -213,7 +213,7 @@ class Ollama implements Arrayable, Jsonable
         if ($this->image) {
             $data['images'] = [$this->getImage()];
         }
-
+        
         return $this->request('/api/generate', $data);
     }
 
