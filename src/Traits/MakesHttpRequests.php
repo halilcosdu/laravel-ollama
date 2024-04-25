@@ -13,10 +13,11 @@ trait MakesHttpRequests
      */
     protected function request(string $urlSuffix, array $data, string $method = 'post')
     {
-        $url = config('ollama.url') . $urlSuffix;
+        $url = config('ollama.url').$urlSuffix;
 
-        if (!empty($data['stream']) && $data['stream'] === true) {
+        if (! empty($data['stream']) && $data['stream'] === true) {
             $client = new Client;
+
             return $client->request($method, $url, [
                 'json' => $data,
                 'stream' => true,
@@ -24,6 +25,7 @@ trait MakesHttpRequests
             ]);
         } else {
             $response = Http::timeout(config('ollama.connection.timeout'))->$method($url, $data);
+
             return $response->json();
         }
     }
