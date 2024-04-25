@@ -13,6 +13,7 @@ Flexible
 Comprehensive: Covers all the endpoints of the Ollama API.
 
 This package builds upon the foundational work provided by the Ollama Laravel package developed by Cloud Studio. Special thanks to them for their innovative approach and contributions to the Laravel community.
+https://github.com/cloudstudio/ollama-laravel
 
 ## Installation
 
@@ -32,9 +33,9 @@ This is the contents of the published config file:
 
 ```php
 return [
-    'model' => env('OLLAMA_MODEL', 'Llama3'),
+    'model' => env('OLLAMA_MODEL', 'llama3'),
     'url' => env('OLLAMA_URL', 'http://127.0.0.1:11434'),
-    'default_prompt' => env('OLLAMA_DEFAULT_PROMPT', 'Hello, how can I assist you today?'),
+    'default_prompt' => env('OLLAMA_DEFAULT_PROMPT', 'Hello world!'),
     'connection' => [
         'timeout' => env('OLLAMA_CONNECTION_TIMEOUT', 30),
     ],
@@ -83,7 +84,7 @@ use HalilCosdu\Ollama\Facades\Ollama;
 
 $response = Ollama::agent('You are a weather expert...')
     ->prompt('Why is the sky blue?')
-    ->model('llama2')
+    ->model('llama3')
     ->options(['temperature' => 0.8])
     ->stream(false)
     ->ask();
@@ -112,7 +113,7 @@ $messages = [
 ];
 
 $response = Ollama::agent('You know me really well!')
-    ->model('llama2')
+    ->model('llama3')
     ->chat($messages);
 
 // "You mentioned that you live in Turkey."
@@ -122,25 +123,25 @@ $response = Ollama::agent('You know me really well!')
 ### Show Model Information
 
 ```php
-$response = Ollama::model('Llama3')->show();
+$response = Ollama::model('llama3')->show();
 ```
 
 ### Copy a Model
 
 ```php
-Ollama::model('Llama3')->copy('NewModel');
+Ollama::model('llama3')->copy('NewModel');
 ```
 
 ### Delete a Model
 
 ```php
-Ollama::model('Llama3')->delete();
+Ollama::model('llama3')->delete();
 ```
 
 ### Generate Embeddings
 
 ```php
-$embeddings = Ollama::model('Llama3')->embeddings('Your prompt here');
+$embeddings = Ollama::model('llama3')->embeddings('Your prompt here');
 ```
 
 
