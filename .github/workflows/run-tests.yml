@@ -58,16 +58,15 @@ jobs:
 
       - name: Install Ollama
         run: |
-          python -m pip install --upgrade pip
-          pip install ollama
+          curl -fsSL https://ollama.com/install.sh | sh
 
       - name: Pull Llama3
         run: |
-          /usr/local/bin/ollama pull llama3
-          
+          ollama pull llama3
+
       - name: Run Llama3
         run: |
-          /usr/local/bin/ollama run llama3
+          ollama run llama3
 
       - name: Execute tests
         run: vendor/bin/pest --ci
