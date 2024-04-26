@@ -14,7 +14,7 @@ Comprehensive: Covers all the endpoints of the Ollama API.
 
 This package builds upon the foundational work provided by the Ollama Laravel package developed by [Cloud Studio](https://github.com/cloudstudio/ollama-laravel). Special thanks to them for their innovative approach and contributions to the Laravel community.
 
-★ In near future, I will add more features to this package.
+★ In the near future, I will add more features to this package.
 
 ## Installation
 
