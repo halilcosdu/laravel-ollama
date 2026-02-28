@@ -14,38 +14,36 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Checkout code
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
 
-      - name: Create Tag and Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v1.0.0
-          name: v1.0.0
-          target_commitish: main
-          body: |
-            ## What's Changed
-
-            ### New Features
-            - Added Laravel 12 support
-            - Added PHP 8.4 support
-
-            ### CI/CD
-            - Updated CI workflow to test against Laravel 12, 11 with PHP 8.4, 8.3, 8.2
-
-            ### Dependencies
-            - Updated `pestphp/pest` to `^2.0|^3.0`
-            - Updated `larastan/larastan` to `^2.0|^3.0`
-            - Updated `orchestra/testbench` to `^8.0|^9.0|^10.0`
-            - Updated `phpstan/phpstan` to `^1.0|^2.0`
-            - Updated `laravel/pint` to `^1.14|^2.0`
-
-            **Full Changelog**: https://github.com/halilcosdu/laravel-ollama/compare/v0.0.2...v1.0.0
-          draft: false
-          prerelease: false
-          generate_release_notes: false
+      - name: Create Release via gh CLI
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v1.0.0 \
+            --repo "${{ github.repository }}" \
+            --target main \
+            --title "v1.0.0" \
+            --notes "$(cat <<'NOTES'
+          ## What's Changed
+
+          ### New Features
+          - Added Laravel 12 support
+          - Added PHP 8.4 support
+
+          ### CI/CD
+          - Updated CI workflow to test against Laravel 12, 11 with PHP 8.4, 8.3, 8.2
+
+          ### Dependencies
+          - Updated \`pestphp/pest\` to \`^2.0|^3.0\`
+          - Updated \`larastan/larastan\` to \`^2.0|^3.0\`
+          - Updated \`orchestra/testbench\` to \`^8.0|^9.0|^10.0\`
+          - Updated \`phpstan/phpstan\` to \`^1.0|^2.0\`
+          - Updated \`laravel/pint\` to \`^1.14|^2.0\`
+
+          **Full Changelog**: https://github.com/halilcosdu/laravel-ollama/compare/v0.0.2...v1.0.0
+          NOTES
+          )"
