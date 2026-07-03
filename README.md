@@ -10,11 +10,11 @@ Features
 - Easy configuration
 - Fluent interface: chain methods together to build your requests.
 - Flexible
-- Covers the core Ollama API endpoints: generate, chat, models, show, copy, delete, pull, and embeddings.
+- Covers the Ollama API endpoints: generate, chat, models, show, copy, delete, pull, push, create, embed, ps, version, embeddings (deprecated).
 
-> **Current limitations**
-> - The following Ollama endpoints are not implemented yet: `embed` (the replacement for `embeddings`), `ps` (running models), `version`, `push`, and `create`. `embeddings` is deprecated upstream and kept only for backwards compatibility.
-> - `chat()` does not forward `keep_alive` or `tools` (function-calling) yet.
+> **Notes**
+> - `embeddings()` is deprecated upstream (POST /api/embeddings). Prefer `embed()` (POST /api/embed) for new code.
+> - For chat with images, include base64-encoded images inside the relevant message's `images` array (per the Ollama chat schema); the fluent `image()` setter only applies to `ask()` (generate).
 
 This package builds upon the foundational work provided by the Ollama Laravel package developed by [Cloud Studio](https://github.com/cloudstudio/ollama-laravel). Special thanks to them for their innovative approach and contributions to the Laravel community.
 
@@ -70,7 +70,14 @@ return [
 @method static \HalilCosdu\Ollama\Ollama pull(): static
 @method static \HalilCosdu\Ollama\Ollama image(string $imagePath): static
 @method static \HalilCosdu\Ollama\Ollama getImage(): ?string
+@method static \HalilCosdu\Ollama\Ollama tools(array $tools): static
+@method static \HalilCosdu\Ollama\Ollama getTools(): array
 @method static \HalilCosdu\Ollama\Ollama embeddings(string $prompt)
+@method static \HalilCosdu\Ollama\Ollama embed(string|array $input)
+@method static \HalilCosdu\Ollama\Ollama ps()
+@method static \HalilCosdu\Ollama\Ollama version()
+@method static \HalilCosdu\Ollama\Ollama push(): static
+@method static \HalilCosdu\Ollama\Ollama create(string $modelfile): static
 @method static \HalilCosdu\Ollama\Ollama getKeepAlive(): string
 @method static \HalilCosdu\Ollama\Ollama keepAlive(string $keepAlive): static
 @method static \HalilCosdu\Ollama\Ollama ask()
@@ -146,7 +153,49 @@ Ollama::model('llama3')->delete();
 ### Generate Embeddings
 
 ```php
+// New: /api/embed (preferred) — accepts a string or an array of inputs.
+$embeddings = Ollama::model('llama3')->embed('Your prompt here');
+$embeddings = Ollama::model('llama3')->embed(['first', 'second']);
+
+// Deprecated: /api/embeddings (kept for backwards compatibility).
 $embeddings = Ollama::model('llama3')->embeddings('Your prompt here');
+```
+
+### Tool Calling (Function Calling)
+
+```php
+$tools = [
+    [
+        'type' => 'function',
+        'function' => [
+            'name' => 'get_weather',
+            'description' => 'Get the weather for a city',
+            'parameters' => [
+                'type' => 'object',
+                'properties' => ['city' => ['type' => 'string']],
+                'required' => ['city'],
+            ],
+        ],
+    ],
+];
+
+$response = Ollama::model('llama3')
+    ->tools($tools)
+    ->chat([['role' => 'user', 'content' => 'Weather in Istanbul?']]);
+```
+
+### Running Models & Server Version
+
+```php
+Ollama::ps();       // GET /api/ps — models currently loaded into memory.
+Ollama::version();  // GET /api/version — running Ollama server version.
+```
+
+### Push / Create a Model
+
+```php
+Ollama::model('myorg/mymodel')->push();
+Ollama::model('my-model')->create("FROM llama3\nSYSTEM You are helpful.");
 ```
 
 

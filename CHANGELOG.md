@@ -2,6 +2,24 @@
 
 All notable changes to `laravel-ollama` will be documented in this file.
 
+## Unreleased
+
+### Added
+- **5 new Ollama endpoints:**
+  - `embed(string|array $input)` — `POST /api/embed` (the replacement for the deprecated `/api/embeddings`; accepts a single string or an array of inputs).
+  - `ps()` — `GET /api/ps` (list running models).
+  - `version()` — `GET /api/version` (running Ollama server version).
+  - `push()` — `POST /api/push` (push a model to a registry).
+  - `create(string $modelfile)` — `POST /api/create` (create a model from a Modelfile).
+- **Tool calling (function calling)** — new fluent `tools(array $tools)` setter, forwarded to `/api/chat` only when set.
+- **Chat forwarding** — `chat()` now forwards `keep_alive` (via the existing `keepAlive()` setter) in addition to format/options/stream.
+
+### Deprecated
+- `embeddings()` now carries a `@deprecated` docblock; it still calls `POST /api/embeddings` for backwards compatibility. Use `embed()` for new code. Removal planned for v2.0.
+
+### Tests
+- +9 `Http::fake` tests covering every new endpoint, tool forwarding, conditional `tools` omission, and `keep_alive` forwarding on chat. 17 → 26 tests (+2 skipped integration).
+
 ## v1.0.1 - 2026-07-03
 
 ### Added
