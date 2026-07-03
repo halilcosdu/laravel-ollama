@@ -1,7 +1,15 @@
 <?php
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use HalilCosdu\Ollama\Ollama;
 use HalilCosdu\Ollama\Services\OllamaService;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->ollama = new Ollama(new OllamaService);
@@ -19,26 +27,138 @@ it('sets properties correctly and returns instance', function ($method, $value) 
     'raw' => ['raw', true],
 ]);
 
-it('correctly processes ask method with real API call', function () {
-    $response = $this->ollama->agent('You are a weather expert...')
-        ->prompt('Why is the sky blue? answer only in 4 words')
-        ->model('llama3')
-        ->options(['temperature' => 0.8])
-        ->stream(false)
-        ->ask();
+describe('generate (ask)', function () {
+    it('POSTs to /api/generate with the fluent state', function () {
+        Http::fake();
 
-    expect($response)->toBeArray();
+        $this->ollama->prompt('hi')->model('llama3')->stream(false)->ask();
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'http://127.0.0.1:11434/api/generate'
+                && $request['model'] === 'llama3'
+                && $request['prompt'] === 'hi'
+                && $request['stream'] === false;
+        });
+    });
+
+    it('forwards keep_alive to generate', function () {
+        Http::fake();
+
+        $this->ollama->prompt('hi')->model('llama3')->stream(false)->keepAlive('10m')->ask();
+
+        Http::assertSent(fn ($request) => $request['keep_alive'] === '10m');
+    });
 });
 
-it('lists available local models', function () {
-    $models = $this->ollama->models();
-    expect($models)->toBeArray();
+describe('chat', function () {
+    it('POSTs the conversation to /api/chat', function () {
+        Http::fake();
+
+        $this->ollama->model('llama3')->chat([
+            ['role' => 'user', 'content' => 'hi'],
+        ]);
+
+        Http::assertSent(function ($request) {
+            return $request->method() === 'POST'
+                && $request->url() === 'http://127.0.0.1:11434/api/chat'
+                && $request['model'] === 'llama3'
+                && $request['messages'][0]['content'] === 'hi';
+        });
+    });
 });
 
-it('shows information about the selected model', function () {
-    $models = $this->ollama->models();
-    $model = $models['models'][0];
-    $this->ollama->model($model['name']);
-    $info = $this->ollama->show();
-    expect($info)->toBeArray();
+describe('models', function () {
+    it('GETs /api/tags', function () {
+        Http::fake([
+            '127.0.0.1:11434/api/tags' => Http::response(['models' => []]),
+        ]);
+
+        $this->ollama->models();
+
+        Http::assertSent(fn ($request) => $request->method() === 'GET'
+            && $request->url() === 'http://127.0.0.1:11434/api/tags');
+    });
+});
+
+describe('show', function () {
+    it('POSTs the model name to /api/show', function () {
+        Http::fake();
+
+        $this->ollama->model('llama3')->show();
+
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && $request->url() === 'http://127.0.0.1:11434/api/show'
+            && $request['name'] === 'llama3');
+    });
+});
+
+describe('copy', function () {
+    it('POSTs source and destination to /api/copy', function () {
+        Http::fake();
+
+        $this->ollama->model('llama3')->copy('NewModel');
+
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && $request->url() === 'http://127.0.0.1:11434/api/copy'
+            && $request['source'] === 'llama3'
+            && $request['destination'] === 'NewModel');
+    });
+});
+
+describe('delete', function () {
+    it('DELETEs the model at /api/delete', function () {
+        Http::fake();
+
+        $this->ollama->model('llama3')->delete();
+
+        Http::assertSent(fn ($request) => $request->method() === 'DELETE'
+            && $request->url() === 'http://127.0.0.1:11434/api/delete'
+            && $request['name'] === 'llama3');
+    });
+});
+
+describe('pull', function () {
+    it('POSTs the model name to /api/pull', function () {
+        Http::fake();
+
+        $this->ollama->model('llama3')->pull();
+
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && $request->url() === 'http://127.0.0.1:11434/api/pull'
+            && $request['name'] === 'llama3');
+    });
+});
+
+describe('embeddings', function () {
+    it('POSTs to the deprecated /api/embeddings endpoint', function () {
+        Http::fake();
+
+        $this->ollama->model('llama3')->embeddings('hello');
+
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && $request->url() === 'http://127.0.0.1:11434/api/embeddings'
+            && $request['model'] === 'llama3'
+            && $request['prompt'] === 'hello');
+    });
+});
+
+describe('streaming', function () {
+    it('uses the bound Guzzle client when streaming a generate request', function () {
+        $container = [];
+        $mock = new MockHandler([
+            new Response(200, [], Utils::streamFor('{"response":"hi","done":true}'."\n")),
+        ]);
+        $handler = HandlerStack::create($mock);
+        $handler->push(Middleware::history($container));
+
+        $this->app->bind(ClientInterface::class, fn () => new Client(['handler' => $handler]));
+
+        $this->ollama->prompt('hi')->model('llama3')->stream(true)->ask();
+
+        expect($container)->toHaveCount(1);
+        expect($container[0]['request']->getMethod())->toBe('POST');
+        expect((string) $container[0]['request']->getUri())->toBe('http://127.0.0.1:11434/api/generate');
+        expect($container[0]['request']->hasHeader('stream'))->toBeFalse();
+    });
 });

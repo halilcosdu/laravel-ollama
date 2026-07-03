@@ -18,17 +18,17 @@ class Ollama implements Arrayable, Jsonable
 
     protected string $model;
 
-    protected string $prompt;
+    protected string $prompt = '';
 
     protected string $format = 'json';
 
-    protected array $options;
+    protected array $options = [];
 
     protected bool $stream = false;
 
     protected bool $raw = false;
 
-    protected string $agent;
+    protected string $agent = '';
 
     protected ?string $image = null;
 
