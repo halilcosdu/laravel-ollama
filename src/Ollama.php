@@ -34,6 +34,8 @@ class Ollama implements Arrayable, Jsonable
 
     protected string $keepAlive = '5m';
 
+    protected array $tools = [];
+
     public function __construct(OllamaService $ollamaService)
     {
         $this->ollamaService = $ollamaService;
@@ -43,6 +45,7 @@ class Ollama implements Arrayable, Jsonable
     protected function setBaseModel(): void
     {
         $this->model = config('ollama.model');
+        $this->selectedModel = config('ollama.model');
     }
 
     public function agent(string $agent): static
@@ -180,9 +183,61 @@ class Ollama implements Arrayable, Jsonable
         return $this->image;
     }
 
+    /**
+     * @deprecated Use embed() instead — this calls the deprecated
+     *             POST /api/embeddings endpoint. Will be removed in v2.0.
+     */
     public function embeddings(string $prompt)
     {
         return $this->ollamaService->generateEmbeddings($this->selectedModel, $prompt);
+    }
+
+    /**
+     * Generate embeddings using the newer POST /api/embed endpoint.
+     * Prefer this over embeddings(), which targets the deprecated
+     * /api/embeddings endpoint.
+     *
+     * @param  string|array<string>  $input
+     */
+    public function embed(string|array $input)
+    {
+        return $this->ollamaService->createEmbed($this->selectedModel, $input);
+    }
+
+    /**
+     * List models currently loaded into memory (running models).
+     */
+    public function ps()
+    {
+        return $this->ollamaService->listRunningModels();
+    }
+
+    /**
+     * Get the running Ollama server version.
+     */
+    public function version()
+    {
+        return $this->ollamaService->version();
+    }
+
+    /**
+     * Push the selected model to a registry.
+     */
+    public function push(): static
+    {
+        $this->ollamaService->pushModel($this->selectedModel);
+
+        return $this;
+    }
+
+    /**
+     * Create a model from a Modelfile.
+     */
+    public function create(string $modelfile): static
+    {
+        $this->ollamaService->createModel($this->selectedModel, $modelfile);
+
+        return $this;
     }
 
     public function getKeepAlive(): string
@@ -195,6 +250,18 @@ class Ollama implements Arrayable, Jsonable
         $this->keepAlive = $keepAlive;
 
         return $this;
+    }
+
+    public function tools(array $tools): static
+    {
+        $this->tools = $tools;
+
+        return $this;
+    }
+
+    public function getTools(): array
+    {
+        return $this->tools;
     }
 
     public function ask()
@@ -219,13 +286,20 @@ class Ollama implements Arrayable, Jsonable
 
     public function chat(array $conversation)
     {
-        return $this->request('/api/chat', [
+        $payload = [
             'model' => $this->getModel(),
             'messages' => $conversation,
             'format' => $this->getFormat(),
             'options' => $this->getOptions(),
             'stream' => $this->getStream(),
-        ]);
+            'keep_alive' => $this->getKeepAlive(),
+        ];
+
+        if (! empty($this->tools)) {
+            $payload['tools'] = $this->getTools();
+        }
+
+        return $this->request('/api/chat', $payload);
     }
 
     public function toArray(): array
