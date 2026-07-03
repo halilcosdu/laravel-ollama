@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-ollama` will be documented in this file.
 
-## Unreleased
+## v1.0.1 - 2026-07-03
 
 ### Added
 - **Real test coverage.** Tests previously made live HTTP calls against a running Ollama server (CI installed Ollama and pulled `llama3`). Replaced the default suite with `Http::fake` + `assertSent` coverage for every endpoint (generate, chat, tags, show, copy, delete, pull, embeddings), plus a Guzzle `MockHandler`-based test for the streaming branch of `MakesHttpRequests`. `Http::preventStrayRequests()` keeps the suite hermetic.
