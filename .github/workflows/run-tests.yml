@@ -18,27 +18,32 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         php: [ 8.4, 8.3, 8.2 ]
-        laravel: [ 13.*, 12.*, 11.* ]
+        laravel: [ 10.*, 11.*, 12.*, 13.* ]
         stability: [ prefer-lowest, prefer-stable ]
-        exclude:
-          - php: 8.2
-            laravel: 13.*
         include:
-          - laravel: 13.*
-            testbench: 11.*
+          - laravel: 10.*
+            testbench: 8.*
+            carbon: ^2.24 || ^3.0
+          - laravel: 11.*
+            testbench: 9.*
             carbon: ^3.0
           - laravel: 12.*
             testbench: 10.*
             carbon: ^3.0
-          - laravel: 11.*
-            testbench: 9.*
+          - laravel: 13.*
+            testbench: 11.*
             carbon: ^3.0
+        exclude:
+          - php: 8.2
+            laravel: 13.*
+          - php: 8.4
+            laravel: 10.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -59,23 +64,6 @@ jobs:
 
       - name: List Installed Dependencies
         run: composer show -D
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'  # Specify the Python version
-
-      - name: Install Ollama
-        run: |
-          curl -fsSL https://ollama.com/install.sh | sh
-
-      - name: Pull Llama3
-        run: |
-          ollama pull llama3
-
-      - name: Run Llama3
-        run: |
-          ollama run llama3
 
       - name: Execute tests
         run: vendor/bin/pest --ci

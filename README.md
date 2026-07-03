@@ -7,10 +7,14 @@
 
 Laravel Ollama is a PHP package that provides a simple and intuitive interface for interacting with the Ollama API. It is designed to be used with Laravel, a popular PHP framework, but can also be used in any PHP application.  This package provides a set of methods for making requests to the Ollama API, including methods for setting the agent, prompt, model, format, options, and more. It also includes methods for handling responses from the API, such as retrieving the response in a specific format or streaming the response.  With Laravel Ollama, you can easily integrate the Ollama API into your Laravel application and start making requests in a matter of minutes.  
 Features
-Easy configuration
-Fluent interface: Chain methods together to build your requests.
-Flexible
-Comprehensive: Covers all the endpoints of the Ollama API.
+- Easy configuration
+- Fluent interface: chain methods together to build your requests.
+- Flexible
+- Covers the core Ollama API endpoints: generate, chat, models, show, copy, delete, pull, and embeddings.
+
+> **Current limitations**
+> - The following Ollama endpoints are not implemented yet: `embed` (the replacement for `embeddings`), `ps` (running models), `version`, `push`, and `create`. `embeddings` is deprecated upstream and kept only for backwards compatibility.
+> - `chat()` does not forward `keep_alive` or `tools` (function-calling) yet.
 
 This package builds upon the foundational work provided by the Ollama Laravel package developed by [Cloud Studio](https://github.com/cloudstudio/ollama-laravel). Special thanks to them for their innovative approach and contributions to the Laravel community.
 

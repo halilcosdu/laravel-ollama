@@ -4,6 +4,7 @@ namespace HalilCosdu\Ollama\Tests;
 
 use HalilCosdu\Ollama\OllamaServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Http;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -15,6 +16,9 @@ class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'HalilCosdu\\Ollama\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        // Keep the test suite hermetic — any un-faked HTTP request fails loudly.
+        Http::preventStrayRequests();
     }
 
     protected function getPackageProviders($app)
@@ -27,10 +31,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-ollama_table.php.stub';
-        $migration->up();
-        */
+        config()->set('ollama.url', 'http://127.0.0.1:11434');
+        config()->set('ollama.model', 'llama3');
     }
 }

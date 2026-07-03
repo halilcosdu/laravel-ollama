@@ -2,6 +2,25 @@
 
 All notable changes to `laravel-ollama` will be documented in this file.
 
+## Unreleased
+
+### Added
+- **Real test coverage.** Tests previously made live HTTP calls against a running Ollama server (CI installed Ollama and pulled `llama3`). Replaced the default suite with `Http::fake` + `assertSent` coverage for every endpoint (generate, chat, tags, show, copy, delete, pull, embeddings), plus a Guzzle `MockHandler`-based test for the streaming branch of `MakesHttpRequests`. `Http::preventStrayRequests()` keeps the suite hermetic.
+- **Optional integration suite** — live Ollama smoke tests moved behind an `OLLAMA_INTEGRATION=1` flag (`@group integration`), skipped by default.
+
+### Changed
+- **CI no longer installs Ollama** or pulls/runs `llama3`; tests are now pure unit tests.
+- **CI matrix** now also tests Laravel 10.x (composer.json claimed it but CI never ran it). Matrix: PHP 8.2/8.3/8.4 × Laravel 10/11/12/13.
+- Bumped GitHub Actions: `actions/checkout` v6, `stefanzweifel/git-auto-commit-action` v7, `dependabot/fetch-metadata` v3.0.0. Supersedes dependabot #12/#13/#14/#15.
+
+### Fixed
+- **PHPStan was broken** by an invalid `checkMissingIterableValueType` option in `phpstan.neon.dist`; removed it and regenerated the baseline.
+- **Uninitialized typed properties** on the `Ollama` class (`$agent`, `$prompt`, `$options`) were accessed before being set; they now default to safe empty values, so `ask()`/`chat()` no longer error when optional setters aren't called.
+- `MakesHttpRequests` now resolves its streaming Guzzle client through the container, so the streaming path can be tested with a `MockHandler`.
+
+### Documentation
+- README: dropped the false "Covers all the endpoints of the Ollama API" claim; added an honest "Current limitations" section.
+
 ## v1.0.0 - 2026-04-09
 
 ### What's Changed
