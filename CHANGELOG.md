@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-ollama` will be documented in this file.
 
-## Unreleased
+## v1.1.0 - 2026-07-03
 
 ### Added
 - **5 new Ollama endpoints:**
