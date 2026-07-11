@@ -7,6 +7,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
+use HalilCosdu\Ollama\Exceptions\OllamaStreamException;
 use HalilCosdu\Ollama\Ollama;
 use HalilCosdu\Ollama\Services\OllamaService;
 use Illuminate\Support\Facades\Http;
@@ -161,4 +162,72 @@ describe('streaming', function () {
         expect((string) $container[0]['request']->getUri())->toBe('http://127.0.0.1:11434/api/generate');
         expect($container[0]['request']->hasHeader('stream'))->toBeFalse();
     });
+});
+
+describe('decoded NDJSON streaming', function () {
+    it('lazily yields decoded generate chunks', function () {
+        $history = [];
+        $mock = new MockHandler([
+            new Response(200, [], Utils::streamFor("{\"response\":\"Hel\",\"done\":false}\n{\"response\":\"lo\",\"done\":true}\n")),
+        ]);
+        $handler = HandlerStack::create($mock);
+        $handler->push(Middleware::history($history));
+        $this->app->bind(ClientInterface::class, fn () => new Client(['handler' => $handler]));
+
+        $chunks = iterator_to_array($this->ollama->model('llama3')->prompt('Hi')->streamAsk());
+
+        expect($chunks)->toHaveCount(2)
+            ->and($chunks[0]['response'])->toBe('Hel')
+            ->and($chunks[1]['done'])->toBeTrue()
+            ->and(json_decode((string) $history[0]['request']->getBody(), true)['stream'])->toBeTrue();
+    });
+
+    it('streams chat messages and preserves tools', function () {
+        $history = [];
+        $mock = new MockHandler([
+            new Response(200, [], Utils::streamFor('{"message":{"content":"Hi"},"done":true}')),
+        ]);
+        $handler = HandlerStack::create($mock);
+        $handler->push(Middleware::history($history));
+        $this->app->bind(ClientInterface::class, fn () => new Client(['handler' => $handler]));
+
+        $tools = [['type' => 'function', 'function' => ['name' => 'clock']]];
+        $chunks = iterator_to_array($this->ollama->tools($tools)->streamChat([
+            ['role' => 'user', 'content' => 'Hi'],
+        ]));
+        $payload = json_decode((string) $history[0]['request']->getBody(), true);
+
+        expect($chunks[0]['message']['content'])->toBe('Hi')
+            ->and($payload['tools'])->toBe($tools)
+            ->and($payload['stream'])->toBeTrue();
+    });
+
+    it('raises a meaningful exception for stream errors', function () {
+        $mock = new MockHandler([
+            new Response(200, [], Utils::streamFor("{\"error\":\"model not found\"}\n")),
+        ]);
+        $this->app->bind(ClientInterface::class, fn () => new Client([
+            'handler' => HandlerStack::create($mock),
+        ]));
+
+        iterator_to_array($this->ollama->streamAsk());
+    })->throws(OllamaStreamException::class, 'model not found');
+
+    it('rejects malformed stream chunks', function () {
+        $mock = new MockHandler([new Response(200, [], Utils::streamFor("not-json\n"))]);
+        $this->app->bind(ClientInterface::class, fn () => new Client([
+            'handler' => HandlerStack::create($mock),
+        ]));
+
+        iterator_to_array($this->ollama->streamAsk());
+    })->throws(OllamaStreamException::class, 'invalid NDJSON');
+});
+
+it('accepts a JSON schema as structured output format', function () {
+    Http::fake();
+    $schema = ['type' => 'object', 'properties' => ['name' => ['type' => 'string']]];
+
+    $this->ollama->format($schema)->stream(false)->prompt('Name a city')->ask();
+
+    Http::assertSent(fn ($request) => $request['format'] === $schema);
 });

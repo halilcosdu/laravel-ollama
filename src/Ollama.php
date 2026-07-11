@@ -3,6 +3,7 @@
 namespace HalilCosdu\Ollama;
 
 use Exception;
+use Generator;
 use HalilCosdu\Ollama\Services\OllamaService;
 use HalilCosdu\Ollama\Traits\MakesHttpRequests;
 use Illuminate\Contracts\Support\Arrayable;
@@ -20,7 +21,7 @@ class Ollama implements Arrayable, Jsonable
 
     protected string $prompt = '';
 
-    protected string $format = 'json';
+    protected string|array $format = 'json';
 
     protected array $options = [];
 
@@ -85,14 +86,14 @@ class Ollama implements Arrayable, Jsonable
         return $this->model;
     }
 
-    public function format(string $format): static
+    public function format(string|array $format): static
     {
         $this->format = $format;
 
         return $this;
     }
 
-    public function getFormat(): string
+    public function getFormat(): string|array
     {
         return $this->format;
     }
@@ -266,6 +267,34 @@ class Ollama implements Arrayable, Jsonable
 
     public function ask()
     {
+        return $this->request('/api/generate', $this->generatePayload());
+    }
+
+    /** @return Generator<int, array<string, mixed>> */
+    public function streamAsk(): Generator
+    {
+        return $this->streamRequest('/api/generate', $this->generatePayload());
+    }
+
+    public function chat(array $conversation)
+    {
+        return $this->request('/api/chat', $this->chatPayload($conversation));
+    }
+
+    /**
+     * Stream decoded chat chunks as they arrive from Ollama.
+     *
+     * @param  array<int, array<string, mixed>>  $conversation
+     * @return Generator<int, array<string, mixed>>
+     */
+    public function streamChat(array $conversation): Generator
+    {
+        return $this->streamRequest('/api/chat', $this->chatPayload($conversation));
+    }
+
+    /** @return array<string, mixed> */
+    private function generatePayload(): array
+    {
         $data = [
             'model' => $this->getModel(),
             'system' => $this->getAgent(),
@@ -281,10 +310,13 @@ class Ollama implements Arrayable, Jsonable
             $data['images'] = [$this->getImage()];
         }
 
-        return $this->request('/api/generate', $data);
+        return $data;
     }
 
-    public function chat(array $conversation)
+    /** @param array<int, array<string, mixed>> $conversation
+     * @return array<string, mixed>
+     */
+    private function chatPayload(array $conversation): array
     {
         $payload = [
             'model' => $this->getModel(),
@@ -299,7 +331,7 @@ class Ollama implements Arrayable, Jsonable
             $payload['tools'] = $this->getTools();
         }
 
-        return $this->request('/api/chat', $payload);
+        return $payload;
     }
 
     public function toArray(): array

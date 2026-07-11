@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \HalilCosdu\Ollama\Ollama getPrompt(): string
  * @method static \HalilCosdu\Ollama\Ollama model(string $model): static
  * @method static \HalilCosdu\Ollama\Ollama getModel()
- * @method static \HalilCosdu\Ollama\Ollama format(string $format): static
- * @method static \HalilCosdu\Ollama\Ollama getFormat(): string
+ * @method static \HalilCosdu\Ollama\Ollama format(string|array $format): static
+ * @method static \HalilCosdu\Ollama\Ollama getFormat(): string|array
  * @method static \HalilCosdu\Ollama\Ollama options(array $options = []): static
  * @method static \HalilCosdu\Ollama\Ollama getOptions(): array
  * @method static \HalilCosdu\Ollama\Ollama stream(bool $stream = false): static
@@ -29,8 +29,17 @@ use Illuminate\Support\Facades\Facade;
  * @method static \HalilCosdu\Ollama\Ollama image(string $imagePath): static
  * @method static \HalilCosdu\Ollama\Ollama getImage(): ?string
  * @method static \HalilCosdu\Ollama\Ollama embeddings(string $prompt)
+ * @method static \HalilCosdu\Ollama\Ollama embed(string|array $input)
+ * @method static \HalilCosdu\Ollama\Ollama ps()
+ * @method static \HalilCosdu\Ollama\Ollama version()
+ * @method static \HalilCosdu\Ollama\Ollama push(): static
+ * @method static \HalilCosdu\Ollama\Ollama create(string $modelfile): static
+ * @method static \HalilCosdu\Ollama\Ollama tools(array $tools): static
+ * @method static \HalilCosdu\Ollama\Ollama getTools(): array
  * @method static \HalilCosdu\Ollama\Ollama ask()
+ * @method static \Generator streamAsk()
  * @method static \HalilCosdu\Ollama\Ollama chat(array $conversation)
+ * @method static \Generator streamChat(array $conversation)
  * @method static \HalilCosdu\Ollama\Ollama getKeepAlive(): string
  * @method static \HalilCosdu\Ollama\Ollama keepAlive(string $keepAlive): static
  * @method static \HalilCosdu\Ollama\Ollama toArray(): array

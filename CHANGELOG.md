@@ -2,6 +2,21 @@
 
 All notable changes to `laravel-ollama` will be documented in this file.
 
+## v1.2.0 - 2026-07-11
+
+### Added
+- Memory-efficient NDJSON streaming with `streamAsk()` and `streamChat()`. Both methods lazily yield decoded chunks and surface server or malformed-stream errors through `OllamaStreamException`.
+- JSON Schema structured outputs: `format()` now accepts either a string or a schema array.
+- PHP 8.5 coverage across the supported Laravel versions.
+
+### Changed
+- The supported framework matrix is now Laravel 11, 12, and 13 on PHP 8.2–8.5 (Laravel 13 requires PHP 8.3+).
+- PHPStan now runs on PHP 8.5 with an explicit memory budget.
+- README rewritten as a practical guide with compatibility, streaming, structured outputs, tool calling, vision, embeddings, model management, API reference, error behavior, and test instructions.
+
+### Tests
+- Added generator streaming coverage for generate/chat payloads, multi-chunk decoding, tool forwarding, server errors, malformed NDJSON, and JSON Schema payloads.
+
 ## v1.1.0 - 2026-07-03
 
 ### Added
