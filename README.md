@@ -2,8 +2,6 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/halilcosdu/laravel-ollama.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-ollama)
 [![Total Downloads](https://img.shields.io/packagist/dt/halilcosdu/laravel-ollama.svg?style=flat-square)](https://packagist.org/packages/halilcosdu/laravel-ollama)
-[![Tests](https://github.com/halilcosdu/laravel-ollama/actions/workflows/run-tests.yml/badge.svg)](https://github.com/halilcosdu/laravel-ollama/actions/workflows/run-tests.yml)
-[![PHPStan](https://github.com/halilcosdu/laravel-ollama/actions/workflows/phpstan.yml/badge.svg)](https://github.com/halilcosdu/laravel-ollama/actions/workflows/phpstan.yml)
 
 A fluent, Laravel-native client for running AI locally with [Ollama](https://ollama.com). Generate text, build conversations, stream tokens without buffering, enforce JSON schemas, call tools, create embeddings, use vision models, and manage the models on your Ollama server.
 
